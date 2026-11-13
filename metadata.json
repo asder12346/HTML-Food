@@ -1,0 +1,6 @@
+{
+  "name": "HTML Foods",
+  "description": "Authentic Nigerian restaurant dining, online table reservations, and worldwide export of premium Nigerian foodstuffs from Akure, Ondo State.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
