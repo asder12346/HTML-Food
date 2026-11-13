@@ -1,3 +1,5 @@
+import { BRAND_LOGO_URL, WHATSAPP_URL } from '../data/catalog';
+
 interface FooterProps {
   onOpenLegal: (key: string) => void;
 }
@@ -17,21 +19,34 @@ export function Footer({ onOpenLegal }: FooterProps) {
     'Privacy Policy',
   ];
 
+  const socialLinks = [
+    { label: 'Instagram', href: 'https://instagram.com/htmlfoods' },
+    { label: 'Facebook', href: 'https://facebook.com/htmlfoods' },
+    { label: 'X (Twitter)', href: 'https://x.com/htmlfoods' },
+    { label: 'WhatsApp', href: WHATSAPP_URL },
+  ];
+
   return (
     <footer className="bg-zinc-950 text-stone-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-zinc-800">
           {/* Brand Summary */}
-          <div className="lg:col-span-5 space-y-3">
+          <div className="lg:col-span-5 space-y-4">
             <a
               href="#top"
-              className="font-display text-2xl font-semibold text-white tracking-tight inline-block"
+              aria-label="HTML Foods Home"
+              className="inline-block rounded-lg bg-black p-2 border border-zinc-800"
             >
-              HTML Foods
+              <img
+                src={BRAND_LOGO_URL}
+                alt="HTML Foods — hyper tasty meal language"
+                referrerPolicy="no-referrer"
+                className="h-11 w-auto object-contain"
+              />
             </a>
             <p className="text-sm text-stone-400 leading-relaxed max-w-md">
-              Premium Nigerian foodstuffs exported worldwide. From dried fish to palm oil and
-              spices, we deliver authentic flavors to your doorstep anywhere in the world.
+              Authentic Nigerian dining in Akure and premium Nigerian foodstuffs delivered across
+              Nigeria and worldwide — from dried fish to palm oil and freshly roasted spices.
             </p>
           </div>
 
@@ -106,7 +121,19 @@ export function Footer({ onOpenLegal }: FooterProps) {
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
           <p>© 2026 HTML Foods. All rights reserved.</p>
-          <p>Made with ❤️ for food lovers</p>
+          <div className="flex flex-wrap items-center gap-5">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-stone-400 hover:text-white transition-colors"
+              >
+                {social.label}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

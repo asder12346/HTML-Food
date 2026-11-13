@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { BRAND_LOGO_URL } from '../data/catalog';
 
 interface NavbarProps {
   cartCount: number;
@@ -20,12 +21,18 @@ export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 bg-stone-50/95 backdrop-blur-md border-b border-stone-200/80">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
-        {/* Zone 1: Single-line Brand Wordmark */}
+        {/* Zone 1: Uploaded HTML Foods Logo */}
         <a
           href="#top"
-          className="font-display text-xl font-semibold tracking-tight text-zinc-900 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-900"
+          aria-label="HTML Foods Home"
+          className="inline-flex items-center shrink-0 rounded-md bg-black px-2 py-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-900"
         >
-          HTML Foods
+          <img
+            src={BRAND_LOGO_URL}
+            alt="HTML Foods — hyper tasty meal language"
+            referrerPolicy="no-referrer"
+            className="h-8 w-auto object-contain"
+          />
         </a>
 
         {/* Zone 2: 5 concise single-line nav links */}

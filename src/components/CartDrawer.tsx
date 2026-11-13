@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { CheckCircle2, Minus, Plus, Trash2, X } from 'lucide-react';
+import { Building2, CheckCircle2, CreditCard, Minus, Plus, Trash2, Truck, X } from 'lucide-react';
 import { formatNaira, type ProductItem } from '../data/catalog';
 import { ResilientImage } from './ResilientImage';
 
@@ -7,6 +7,9 @@ export interface CartEntry {
   item: ProductItem;
   quantity: number;
 }
+
+type FulfillmentType = 'akure' | 'nigeria' | 'export';
+type PaymentMethod = 'card' | 'transfer' | 'cod';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -17,6 +20,18 @@ interface CartDrawerProps {
   onClearCart: () => void;
 }
 
+const DELIVERY_FEES: Record<FulfillmentType, { label: string; fee: number; eta: string }> = {
+  akure: { label: 'Akure Delivery', fee: 1500, eta: '35 – 45 minutes' },
+  nigeria: { label: 'Nationwide (Nigeria)', fee: 3500, eta: '24 – 48 hours' },
+  export: { label: 'Worldwide Export', fee: 12000, eta: '4 – 7 business days' },
+};
+
+const PAYMENT_LABELS: Record<PaymentMethod, string> = {
+  card: 'Card Payment (Visa / Mastercard / Verve)',
+  transfer: 'Instant Bank Transfer',
+  cod: 'Pay on Delivery (Akure Only)',
+};
+
 export function CartDrawer({
   isOpen,
   onClose,
@@ -25,7 +40,10 @@ export function CartDrawer({
   onRemoveItem,
   onClearCart,
 }: CartDrawerProps) {
-  const [fulfillment, setFulfillment] = useState<'export' | 'local'>('export');
+  const [fulfillment, setFulfillment] = useState<FulfillmentType>('akure');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+  const [cardLastFour, setCardLastFour] = useState('4242');
+  const [cardExpiry, setCardExpiry] = useState('09/28');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -33,9 +51,14 @@ export function CartDrawer({
   const [error, setError] = useState('');
   const [orderConfirmation, setOrderConfirmation] = useState<{
     orderNumber: string;
+    customerName: string;
+    items: CartEntry[];
+    subtotal: number;
+    deliveryFee: number;
     total: number;
     destination: string;
-    fulfillment: 'export' | 'local';
+    fulfillment: FulfillmentType;
+    paymentMethod: PaymentMethod;
   } | null>(null);
 
   if (!isOpen) return null;
@@ -44,13 +67,22 @@ export function CartDrawer({
     (sum, entry) => sum + entry.item.priceNaira * entry.quantity,
     0
   );
+  const deliveryFee = entries.length > 0 ? DELIVERY_FEES[fulfillment].fee : 0;
+  const grandTotal = subtotal + deliveryFee;
+
+  const handleSelectFulfillment = (next: FulfillmentType) => {
+    setFulfillment(next);
+    if (next !== 'akure' && paymentMethod === 'cod') {
+      setPaymentMethod('card');
+    }
+  };
 
   const handleCheckout = (e: FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (entries.length === 0) {
-      setError('Your cart is empty. Add an export bundle or dish first.');
+      setError('Your cart is empty. Add a meal or foodstuff bundle first.');
       return;
     }
     if (!customerName.trim()) {
@@ -62,20 +94,29 @@ export function CartDrawer({
       return;
     }
     if (!customerEmail.trim() || !customerEmail.includes('@')) {
-      setError('Please enter a valid email address for tracking updates.');
+      setError('Please enter a valid email address for your receipt.');
       return;
     }
     if (!destination.trim()) {
-      setError('Please enter your delivery street address and country.');
+      setError('Please enter your delivery street address and city/state.');
+      return;
+    }
+    if (paymentMethod === 'card' && (cardLastFour.trim().length < 4 || !cardExpiry.trim())) {
+      setError('Please verify your card digits and expiry date.');
       return;
     }
 
-    const orderNumber = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
+    const orderNumber = `HF-${Math.floor(10000 + Math.random() * 90000)}`;
     setOrderConfirmation({
       orderNumber,
-      total: subtotal,
+      customerName: customerName.trim(),
+      items: [...entries],
+      subtotal,
+      deliveryFee,
+      total: grandTotal,
       destination: destination.trim(),
       fulfillment,
+      paymentMethod,
     });
     onClearCart();
   };
@@ -93,7 +134,7 @@ export function CartDrawer({
           <div>
             <h2 className="font-display text-xl font-semibold text-zinc-900">Your Order</h2>
             <p className="text-xs text-stone-500">
-              Export foodstuffs &amp; Akure kitchen delivery
+              Secure checkout · Meals &amp; Nigerian foodstuffs
             </p>
           </div>
           <button
@@ -112,7 +153,7 @@ export function CartDrawer({
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
           {orderConfirmation ? (
-            <div className="py-6 space-y-5">
+            <div className="py-4 space-y-5">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="w-7 h-7 text-emerald-800 shrink-0" />
                 <div>
@@ -120,26 +161,54 @@ export function CartDrawer({
                     Order Confirmed
                   </p>
                   <h3 className="font-display text-2xl font-semibold text-zinc-900 tabular-nums">
-                    Order #{orderConfirmation.orderNumber}
+                    #{orderConfirmation.orderNumber}
                   </h3>
                 </div>
               </div>
 
               <p className="text-sm text-stone-600 leading-relaxed">
-                {orderConfirmation.fulfillment === 'export'
-                  ? 'Preparing your vacuum-sealed export parcel from our Akure hub. Tracking details will arrive via email shortly.'
-                  : 'Our kitchen has received your order and is preparing it fresh for dispatch in Akure.'}
+                Thank you,{' '}
+                <span className="font-semibold text-zinc-900">
+                  {orderConfirmation.customerName}
+                </span>
+                . Your order is confirmed and being prepared at our Akure kitchen &amp; dispatch hub.
               </p>
 
-              <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
+              {/* Itemized Receipt */}
+              <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 space-y-3 text-sm">
+                <div className="space-y-1.5 border-b border-stone-200 pb-3">
+                  {orderConfirmation.items.map(({ item, quantity }) => (
+                    <div key={item.id} className="flex justify-between gap-2 text-xs">
+                      <span className="text-zinc-800">
+                        {quantity}× {item.name}
+                      </span>
+                      <span className="font-medium text-zinc-900 tabular-nums shrink-0">
+                        {formatNaira(item.priceNaira * quantity)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-between text-xs">
+                  <span className="text-stone-500">Payment Method</span>
+                  <span className="font-medium text-zinc-900 text-right">
+                    {PAYMENT_LABELS[orderConfirmation.paymentMethod]}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-stone-500">Estimated Delivery</span>
+                  <span className="font-medium text-emerald-900">
+                    {DELIVERY_FEES[orderConfirmation.fulfillment].eta}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
                   <span className="text-stone-500">Destination</span>
                   <span className="font-medium text-zinc-900 text-right max-w-[200px]">
                     {orderConfirmation.destination}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-stone-200">
-                  <span className="text-stone-500">Total Paid</span>
+                  <span className="font-semibold text-zinc-900">Total Amount</span>
                   <span className="font-semibold text-zinc-900 tabular-nums">
                     {formatNaira(orderConfirmation.total)}
                   </span>
@@ -163,7 +232,7 @@ export function CartDrawer({
                 Your order bag is empty
               </p>
               <p className="text-sm text-stone-600">
-                Add any Nigerian export foodstuff bundle or restaurant dish to begin checkout.
+                Add any Nigerian foodstuff bundle or restaurant dish to begin checkout.
               </p>
               <button
                 type="button"
@@ -233,39 +302,42 @@ export function CartDrawer({
                 ))}
               </ul>
 
-              {/* Delivery Mode & Checkout Form */}
-              <form id="cart-checkout-form" onSubmit={handleCheckout} noValidate className="space-y-4 pt-4 border-t border-stone-200">
+              {/* Delivery Zone, Payment Method & Customer Form */}
+              <form
+                id="cart-checkout-form"
+                onSubmit={handleCheckout}
+                noValidate
+                className="space-y-5 pt-4 border-t border-stone-200"
+              >
                 <div>
                   <span className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-2">
-                    Delivery Method
+                    1. Delivery Area
                   </span>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setFulfillment('export')}
-                      className={`py-2 px-3 min-h-[40px] text-xs font-semibold rounded-lg border transition-colors cursor-pointer ${
-                        fulfillment === 'export'
-                          ? 'border-emerald-900 bg-emerald-900 text-white'
-                          : 'border-stone-200 bg-stone-50 text-zinc-800'
-                      }`}
-                    >
-                      Worldwide Export
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFulfillment('local')}
-                      className={`py-2 px-3 min-h-[40px] text-xs font-semibold rounded-lg border transition-colors cursor-pointer ${
-                        fulfillment === 'local'
-                          ? 'border-emerald-900 bg-emerald-900 text-white'
-                          : 'border-stone-200 bg-stone-50 text-zinc-800'
-                      }`}
-                    >
-                      Akure Kitchen Delivery
-                    </button>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(['akure', 'nigeria', 'export'] as FulfillmentType[]).map((zone) => (
+                      <button
+                        key={zone}
+                        type="button"
+                        onClick={() => handleSelectFulfillment(zone)}
+                        className={`py-2 px-2 min-h-[40px] text-[11px] font-semibold rounded-lg border text-center transition-colors cursor-pointer ${
+                          fulfillment === zone
+                            ? 'border-emerald-900 bg-emerald-900 text-white'
+                            : 'border-stone-200 bg-stone-50 text-zinc-800 hover:border-stone-400'
+                        }`}
+                      >
+                        {DELIVERY_FEES[zone].label}
+                      </button>
+                    ))}
                   </div>
+                  <p className="text-xs text-stone-500 mt-1.5">
+                    Estimated delivery: {DELIVERY_FEES[fulfillment].eta}
+                  </p>
                 </div>
 
                 <div className="space-y-3">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    2. Recipient Details
+                  </span>
                   <div>
                     <label htmlFor="checkout-name" className="block text-xs font-medium text-zinc-800 mb-1">
                       Full Name
@@ -309,16 +381,107 @@ export function CartDrawer({
                   </div>
                   <div>
                     <label htmlFor="checkout-address" className="block text-xs font-medium text-zinc-800 mb-1">
-                      Delivery Address &amp; Country
+                      Delivery Address
                     </label>
                     <input
                       id="checkout-address"
                       type="text"
-                      placeholder="Street, City, Postal Code, Country"
+                      placeholder="Street, Area, City / State"
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
                       className="w-full h-10 px-3 rounded-lg border border-stone-300 text-sm focus:outline-2 focus:outline-emerald-900"
                     />
+                  </div>
+                </div>
+
+                {/* Payment Method Selection */}
+                <div className="space-y-2.5">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    3. Payment Method
+                  </span>
+
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('card')}
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left text-xs transition-colors cursor-pointer ${
+                        paymentMethod === 'card'
+                          ? 'border-emerald-900 bg-stone-50 text-zinc-900'
+                          : 'border-stone-200 text-stone-700 hover:border-stone-400'
+                      }`}
+                    >
+                      <CreditCard className="w-4 h-4 text-emerald-900 shrink-0" />
+                      <span className="font-semibold">Card Payment (Visa / Mastercard / Verve)</span>
+                    </button>
+
+                    {paymentMethod === 'card' && (
+                      <div className="grid grid-cols-2 gap-2.5 pl-2 pt-1">
+                        <div>
+                          <label htmlFor="card-digits" className="block text-[11px] text-stone-500 mb-1">
+                            Card Last 4 Digits
+                          </label>
+                          <input
+                            id="card-digits"
+                            type="text"
+                            maxLength={4}
+                            value={cardLastFour}
+                            onChange={(e) => setCardLastFour(e.target.value.replace(/\D/g, ''))}
+                            className="w-full h-9 px-2.5 rounded-md border border-stone-300 text-xs tabular-nums focus:outline-2 focus:outline-emerald-900"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="card-exp" className="block text-[11px] text-stone-500 mb-1">
+                            Expiry (MM/YY)
+                          </label>
+                          <input
+                            id="card-exp"
+                            type="text"
+                            maxLength={5}
+                            value={cardExpiry}
+                            onChange={(e) => setCardExpiry(e.target.value)}
+                            className="w-full h-9 px-2.5 rounded-md border border-stone-300 text-xs tabular-nums focus:outline-2 focus:outline-emerald-900"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('transfer')}
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left text-xs transition-colors cursor-pointer ${
+                        paymentMethod === 'transfer'
+                          ? 'border-emerald-900 bg-stone-50 text-zinc-900'
+                          : 'border-stone-200 text-stone-700 hover:border-stone-400'
+                      }`}
+                    >
+                      <Building2 className="w-4 h-4 text-emerald-900 shrink-0" />
+                      <span className="font-semibold">Instant Bank Transfer</span>
+                    </button>
+
+                    {paymentMethod === 'transfer' && (
+                      <div className="rounded-lg border border-stone-200 bg-stone-50 p-3 text-xs text-stone-700 space-y-1">
+                        <p className="font-semibold text-zinc-900">HTML Foods Dispatch Account</p>
+                        <p className="tabular-nums">Moniepoint MFB · 8090 670 197 · HTML Foods Ltd</p>
+                        <p className="text-[11px] text-stone-500">
+                          Click Complete Order below after initiating your transfer for instant verification.
+                        </p>
+                      </div>
+                    )}
+
+                    {fulfillment === 'akure' && (
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('cod')}
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left text-xs transition-colors cursor-pointer ${
+                          paymentMethod === 'cod'
+                            ? 'border-emerald-900 bg-stone-50 text-zinc-900'
+                            : 'border-stone-200 text-stone-700 hover:border-stone-400'
+                        }`}
+                      >
+                        <Truck className="w-4 h-4 text-emerald-900 shrink-0" />
+                        <span className="font-semibold">Pay on Delivery (Akure Orders)</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -334,11 +497,23 @@ export function CartDrawer({
 
         {/* Footer Totals */}
         {!orderConfirmation && entries.length > 0 && (
-          <div className="px-6 py-4 border-t border-stone-200 bg-stone-50 space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-stone-600">Subtotal</span>
-              <span className="text-lg font-semibold text-zinc-900 tabular-nums">
+          <div className="px-6 py-4 border-t border-stone-200 bg-stone-50 space-y-2.5">
+            <div className="flex items-center justify-between text-xs text-stone-600">
+              <span>Subtotal</span>
+              <span className="tabular-nums font-medium text-zinc-900">
                 {formatNaira(subtotal)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-stone-600">
+              <span>Delivery ({DELIVERY_FEES[fulfillment].label})</span>
+              <span className="tabular-nums font-medium text-zinc-900">
+                {formatNaira(deliveryFee)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm pt-1.5 border-t border-stone-200">
+              <span className="font-semibold text-zinc-900">Total</span>
+              <span className="text-lg font-semibold text-zinc-900 tabular-nums">
+                {formatNaira(grandTotal)}
               </span>
             </div>
             <button
@@ -346,7 +521,7 @@ export function CartDrawer({
               form="cart-checkout-form"
               className="w-full py-3 min-h-[44px] text-sm font-semibold text-white bg-emerald-900 hover:bg-emerald-950 rounded-lg transition-colors cursor-pointer"
             >
-              Complete Order · {formatNaira(subtotal)}
+              Complete Order · {formatNaira(grandTotal)}
             </button>
           </div>
         )}

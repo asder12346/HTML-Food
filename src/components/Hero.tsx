@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { HERO_IMAGE } from '../data/catalog';
+import { HERO_IMAGE, RESTAURANT_AMBIANCE_IMAGE } from '../data/catalog';
 import { ResilientImage } from './ResilientImage';
 
 interface HeroProps {
@@ -9,10 +9,10 @@ interface HeroProps {
 
 export function Hero({ onShopNow, onReserveClick }: HeroProps) {
   const kpis = [
-    { value: '100+', label: 'Products' },
-    { value: '30+', label: 'Countries' },
-    { value: '5,000+', label: 'Orders Shipped' },
-    { value: '4.9', label: 'Rating · Verified Reviews' },
+    { value: '100+', label: 'Products & Fresh Dishes' },
+    { value: 'Trusted Across Nigeria', label: 'All 36 States · Worldwide Dispatch' },
+    { value: '5,000+', label: 'Orders Shipped & Served' },
+    { value: '4.9', label: 'Rating · Verified Guests' },
   ];
 
   return (
@@ -23,17 +23,17 @@ export function Hero({ onShopNow, onReserveClick }: HeroProps) {
           <div className="lg:col-span-6 flex flex-col justify-between py-2">
             <div>
               <p className="text-sm font-medium text-emerald-900 tracking-wide mb-4">
-                Shipping Worldwide from Nigeria · USA, UK, Canada &amp; more
+                Akure Flagship Restaurant &amp; Pantry · Trusted Across Nigeria
               </p>
 
               <h1 className="font-display text-[clamp(2.25rem,4vw,3.75rem)] leading-[1.08] tracking-tight font-semibold text-zinc-900 text-balance mb-5">
-                Nigerian Foods, Exported Worldwide
+                Hyper Tasty Nigerian Meals &amp; Pantry Staples
               </h1>
 
               <p className="text-base sm:text-lg text-stone-600 leading-relaxed max-w-xl mb-8">
-                Authentic Nigerian foodstuffs delivered to your doorstep anywhere in the world —
-                from premium dried fish to palm oil, spices, and staples — alongside chef-crafted
-                dining in Akure.
+                Dine inside our warm Akure dining room or order authentic Nigerian foodstuffs —
+                from vacuum-sealed dried catfish and cold-pressed red palm oil to wood-fired party
+                jollof and pounded yam delivered to your door.
               </p>
             </div>
 
@@ -44,15 +44,15 @@ export function Hero({ onShopNow, onReserveClick }: HeroProps) {
                   onClick={onShopNow}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] text-sm font-semibold text-white bg-emerald-900 hover:bg-emerald-950 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-900"
                 >
-                  <span>Shop Now</span>
+                  <span>Order Online</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <a
-                  href="#products"
+                  href="#menu"
                   className="inline-flex items-center justify-center px-5 py-3 min-h-[44px] text-sm font-semibold text-zinc-900 bg-white border border-stone-300 hover:border-zinc-900 rounded-lg transition-colors whitespace-nowrap shrink-0"
                 >
-                  View Products
+                  View Menu
                 </a>
 
                 <button
@@ -60,32 +60,53 @@ export function Hero({ onShopNow, onReserveClick }: HeroProps) {
                   onClick={onReserveClick}
                   className="inline-flex items-center justify-center px-4 py-3 min-h-[44px] text-sm font-semibold text-emerald-900 hover:underline underline-offset-4 whitespace-nowrap shrink-0 cursor-pointer"
                 >
-                  Book a Table
+                  Reserve a Table
                 </button>
               </div>
 
               <p className="text-xs text-stone-500">
-                Global Shipping · USA, UK, Canada &amp; Europe · Akure Flagship Dining Room
+                Fonts Hall Complex, Akure-Ilesha Road · Nationwide &amp; International Shipping
               </p>
             </div>
           </div>
 
-          {/* Right Column: Dominant 16:9 Culinary Visual */}
-          <div className="lg:col-span-6">
-            <div className="relative h-full min-h-[260px] lg:min-h-[400px] rounded-xl overflow-hidden border border-stone-200 bg-stone-200">
+          {/* Right Column: Dual Culinary & Dining Ambiance Showcase */}
+          <div className="lg:col-span-6 grid grid-cols-1 gap-4">
+            <div className="relative min-h-[240px] lg:min-h-[290px] rounded-xl overflow-hidden border border-stone-200 bg-stone-200">
               <ResilientImage
                 src={HERO_IMAGE}
-                alt="Nigerian export foodstuffs including garri, red palm oil, dried fish, suya skewers, and jollof rice"
-                className="w-full h-full lg:h-full object-cover"
-                fallbackLabel="Authentic Nigerian Export Foodstuffs & Restaurant Kitchen"
+                alt="Nigerian culinary feast with red palm oil, garri, grilled suya skewers, and jollof rice"
+                className="w-full h-full object-cover"
+                fallbackLabel="Authentic Nigerian Cuisine & Export Foodstuffs"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 sm:p-6">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent p-4 sm:p-5">
                 <p className="text-xs font-medium text-stone-200">
-                  Akure Kitchen &amp; Export Hub · Ondo State, Nigeria
+                  Signature Kitchen &amp; Pantry Bundles
                 </p>
-                <p className="text-sm sm:text-base font-medium text-white mt-1">
-                  Vacuum-sealed dried seafood, cold-pressed palm oil, and fire-roasted restaurant classics.
+                <p className="text-sm font-medium text-white mt-0.5">
+                  Hand-selected ingredients and open-fire Nigerian classics prepared fresh daily.
                 </p>
+              </div>
+            </div>
+
+            <div className="relative h-40 sm:h-44 rounded-xl overflow-hidden border border-stone-200 bg-stone-200">
+              <ResilientImage
+                src={RESTAURANT_AMBIANCE_IMAGE}
+                alt="Warm contemporary oak dining room interior at HTML Foods in Akure"
+                className="w-full h-full object-cover"
+                fallbackLabel="HTML Foods Akure Dining Room Ambiance"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent px-4 py-3 flex items-center justify-between gap-4">
+                <span className="text-xs sm:text-sm font-medium text-white">
+                  Akure Dining Room · Tue–Sun, 11:30 AM – 10:30 PM
+                </span>
+                <button
+                  type="button"
+                  onClick={onReserveClick}
+                  className="text-xs font-semibold text-amber-300 hover:text-white underline underline-offset-4 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  Book Table
+                </button>
               </div>
             </div>
           </div>
@@ -95,7 +116,7 @@ export function Hero({ onShopNow, onReserveClick }: HeroProps) {
         <div className="mt-10 pt-8 border-t border-stone-200 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {kpis.map((item) => (
             <div key={item.label} className="space-y-1">
-              <div className="font-display text-2xl sm:text-3xl font-semibold text-zinc-900 tabular-nums">
+              <div className="font-display text-xl sm:text-2xl font-semibold text-zinc-900 tabular-nums">
                 {item.value}
               </div>
               <div className="text-xs sm:text-sm text-stone-600">{item.label}</div>

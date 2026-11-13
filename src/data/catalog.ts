@@ -3,7 +3,10 @@ import driedSeafoodImg from '../assets/images/export_dried_seafood_1794560055353
 import oilsSpicesImg from '../assets/images/export_oils_spices_1794560056682.jpg';
 import staplesBundleImg from '../assets/images/export_staples_bundle_1794560055749.jpg';
 import restaurantDishesImg from '../assets/images/restaurant_signature_dishes_1794560056779.jpg';
-import chefPortraitImg from '../assets/images/chef_head_portrait_1794560057166.jpg';
+import restaurantAmbianceImg from '../assets/images/restaurant_dining_ambiance_1794560623018.jpg';
+import chefTundeImg from '../assets/images/chef_head_portrait_1794560057166.jpg';
+import chefNgoziImg from '../assets/images/chef_amaka_nwosu_1794560622097.jpg';
+import chefIbrahimImg from '../assets/images/chef_ibrahim_danjuma_1794560622663.jpg';
 
 export interface ExportCategory {
   id: string;
@@ -28,6 +31,17 @@ export interface ProductItem {
   prepTime?: string;
 }
 
+export interface ChefProfile {
+  id: string;
+  name: string;
+  role: string;
+  experience: string;
+  bio: string;
+  signatureDishes: string[];
+  featuredProductId: string;
+  image: string;
+}
+
 export interface StepItem {
   step: string;
   title: string;
@@ -43,9 +57,46 @@ export interface TestimonialItem {
   context: string;
 }
 
+export const BRAND_LOGO_URL = '/assets/aistudio/image_43a63e31.png';
+export const WHATSAPP_URL =
+  'https://wa.me/2349067019742?text=Hello%20HTML%20Foods%2C%20I%20would%20like%20to%20inquire%20about%20your%20meals%20and%20orders.';
+
 export const HERO_IMAGE = heroImg;
-export const CHEF_PORTRAIT_IMAGE = chefPortraitImg;
 export const RESTAURANT_DISHES_IMAGE = restaurantDishesImg;
+export const RESTAURANT_AMBIANCE_IMAGE = restaurantAmbianceImg;
+
+export const CHEF_PROFILES: ChefProfile[] = [
+  {
+    id: 'chef-tunde',
+    name: 'Chef Tunde Adebayo',
+    role: 'Executive Head Chef',
+    experience: '18 Years Experience',
+    bio: 'Trained across traditional Ondo State kitchens and modern Lagos dining rooms, Chef Tunde leads HTML Foods with an unwavering respect for open-fire aromatics, hand-pounded swallows, and unhurried spice extraction.',
+    signatureDishes: ['Akure Pounded Yam & Egusi Royal', 'Smoky Wood-Fired Party Jollof'],
+    featuredProductId: 'dish-pounded-yam-egusi',
+    image: chefTundeImg,
+  },
+  {
+    id: 'chef-ngozi',
+    name: 'Chef Ngozi Okafor',
+    role: 'Sous Chef & Soup Master',
+    experience: '11 Years Experience',
+    bio: 'Passionate about heritage Nigerian broths and fermented condiments, Chef Ngozi oversees every slow-simmered soup pot and inspects the moisture grade of our dried seafood and melon seed collections.',
+    signatureDishes: ['Akure Catfish Pepper Soup', 'Local Ofada Rice & Ayamase Stew'],
+    featuredProductId: 'dish-catfish-peppersoup',
+    image: chefNgoziImg,
+  },
+  {
+    id: 'chef-ibrahim',
+    name: 'Chef Ibrahim Danjuma',
+    role: 'Grill & Spice Specialist',
+    experience: '9 Years Experience',
+    bio: 'A third-generation suya spice roaster, Chef Ibrahim blends toasted groundnuts, ginger, cloves, and Cameroon pepper fresh daily—bringing bold charcoal depth to both our dine-in grill and export spice jars.',
+    signatureDishes: ['Kilishi-Glazed Beef Suya Platter', 'Spiced Puff-Puff & Zobo Flight'],
+    featuredProductId: 'dish-suya-skewers',
+    image: chefIbrahimImg,
+  },
+];
 
 export const EXPORT_CATEGORIES: ExportCategory[] = [
   {
@@ -75,7 +126,7 @@ export const EXPORT_CATEGORIES: ExportCategory[] = [
   {
     id: 'cat-bundles',
     name: 'Bundle Packages',
-    description: 'Complete foodstuff bundles for families abroad',
+    description: 'Complete foodstuff bundles for households across Nigeria & abroad',
     productCountLabel: '10+ bundles',
     filterKey: 'Bundle',
     image: heroImg,
@@ -162,7 +213,7 @@ export const EXPORT_PRODUCTS: ProductItem[] = [
     packSize: '15kg Pack',
     category: 'Snacks',
     description:
-      'Plantain flour, chin chin, and dried plantain chips - 15kg variety pack for international shipping',
+      'Plantain flour, chin chin, and dried plantain chips - 15kg variety pack for fast dispatch',
     priceNaira: 1500,
     image: staplesBundleImg,
     kind: 'export',
@@ -290,11 +341,11 @@ export const TESTIMONIALS: TestimonialItem[] = [
   {
     id: 'test-1',
     quote:
-      'Before switching to HTML Foods, half of our dried catfish shipments to Houston arrived crushed or stale. Their 5kg vacuum-sealed pack landed in 5 days smelling like fresh Akure market smoke.',
+      'Before switching to HTML Foods, half of our dried catfish parcels arrived crushed or stale. Their 5kg vacuum-sealed pack landed in Houston in 5 days smelling like fresh Akure market smoke.',
     author: 'Dr. Bukola Adeyemi',
     role: 'Consultant Pediatrician',
-    location: 'Houston, USA',
-    context: '5kg Dried Fish & 25L Palm Oil Export',
+    location: 'Houston & Ibadan',
+    context: '5kg Dried Fish & 25L Palm Oil Order',
   },
   {
     id: 'test-2',
@@ -302,16 +353,16 @@ export const TESTIMONIALS: TestimonialItem[] = [
       'We booked the Chef’s Tasting Table for our parents’ anniversary at Fonts Hall Complex. Chef Tunde served hand-pounded yam and egusi that reminded everyone of village festivals, with zero wait time.',
     author: 'Chukwuemeka Okafor',
     role: 'Principal Architect',
-    location: 'Akure, Nigeria',
+    location: 'Akure, Ondo State',
     context: 'Table Reservation · 8 Guests',
   },
   {
     id: 'test-3',
     quote:
-      'Our family pantry in North London runs entirely on the 50kg Ultimate Nigerian Foodstuff Bundle. Unrefined red palm oil arrived leak-free, and the ogbono draws cleanly every single pot.',
+      'Whether ordering hot Party Jollof to our office in Victoria Island or restocking our family kitchen with the 50kg Ultimate Bundle, the packaging and flavor consistency are unmatched.',
     author: 'Folake Balogun-Wright',
     role: 'Operations Director',
-    location: 'London, UK',
+    location: 'Lagos & London',
     context: '50kg Mega Pack · Quarterly Reorder',
   },
 ];
@@ -321,34 +372,34 @@ export const LEGAL_DOCUMENTS: Record<string, { title: string; updated: string; p
     title: 'Shipping Policy',
     updated: 'Updated November 2026',
     paragraphs: [
-      'HTML Foods dispatches international export packages from Akure and Lagos hubs via tracked air freight partners to the USA, UK, Canada, Europe, and 30+ destinations worldwide.',
+      'HTML Foods delivers hot meals across Akure within 35–45 minutes and dispatches nationwide Nigerian orders plus international foodstuff bundles to the USA, UK, Canada, and Europe.',
       'All dried seafood, spices, and grains are moisture-checked, double vacuum-sealed, and packed in export-certified food-grade boxes. Palm oil orders ship in triple-sealed tamper-proof HDPE containers.',
-      'International transit takes 4–7 business days depending on customs clearance. Local restaurant orders within Akure, Ondo State are delivered within 35–50 minutes.',
+      'Interstate orders within Nigeria arrive within 24–48 hours; international air freight arrives within 4–7 business days with tracking.',
     ],
   },
   'Terms of Service': {
     title: 'Terms of Service',
     updated: 'Updated November 2026',
     paragraphs: [
-      'By placing a foodstuff export order, local delivery order, or restaurant table reservation with HTML Foods, you confirm that shipping and contact information provided is accurate.',
+      'By placing a foodstuff order, local restaurant delivery order, or table reservation with HTML Foods, you confirm that shipping and contact information provided is accurate.',
       'Table reservations are held for 20 minutes past the scheduled seating time. For parties of 6 or more, we recommend booking at least 24 hours in advance.',
-      'Export pricing reflects standard Naira catalog rates; international air-freight surcharges are calculated transparently prior to final payment confirmation.',
+      'Catalog pricing is displayed transparently in Naira (₦), with delivery fees calculated prior to final payment confirmation.',
     ],
   },
   'Refund Policy': {
     title: 'Refund Policy',
     updated: 'Updated November 2026',
     paragraphs: [
-      'If any export package arrives damaged, unsealed, or missing items, notify htmlfoods@gmail.com or +234 906 701 9742 within 48 hours of delivery with order photos for an immediate replacement or full refund.',
-      'Restaurant dine-in deposits or pre-orders cancelled at least 4 hours prior to seating time are refunded in full.',
+      'If any package arrives damaged, unsealed, or missing items, notify htmlfoods@gmail.com or 0906 701 9742 within 48 hours of delivery with order photos for an immediate replacement or full refund.',
+      'Restaurant dine-in pre-orders cancelled at least 4 hours prior to seating time are refunded in full.',
     ],
   },
   'Privacy Policy': {
     title: 'Privacy Policy',
     updated: 'Updated November 2026',
     paragraphs: [
-      'HTML Foods collects only the contact, delivery address, and reservation details strictly necessary to fulfill your dining booking or foodstuff shipment.',
-      'We never sell customer records or phone numbers to third-party brokers. Shipment tracking notifications are sent directly to your provided email or phone number.',
+      'HTML Foods collects only the contact, delivery address, and reservation details strictly necessary to fulfill your dining booking or foodstuff order.',
+      'We never sell customer records or phone numbers to third-party brokers. Order updates are sent directly to your provided email or phone number.',
     ],
   },
 };

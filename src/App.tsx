@@ -4,10 +4,11 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { CatalogSection } from './components/CatalogSection';
 import { ChefSection } from './components/ChefSection';
-import { ReservationSection } from './components/ReservationSection';
+import { ReservationSection, type ReservationData } from './components/ReservationSection';
 import { HowItWorksAndTestimonials } from './components/HowItWorksAndTestimonials';
 import { CartDrawer, type CartEntry } from './components/CartDrawer';
 import { LegalModal } from './components/LegalModal';
+import { SupportChatWidget } from './components/SupportChatWidget';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeExportFilter, setActiveExportFilter] = useState<string>('All');
   const [preferredExperience, setPreferredExperience] = useState<string>('Main Dining Room');
+  const [externalReservation, setExternalReservation] = useState<ReservationData | null>(null);
   const [activeLegalKey, setActiveLegalKey] = useState<string | null>(null);
 
   const totalCartItems = cartEntries.reduce((sum, entry) => sum + entry.quantity, 0);
@@ -60,6 +62,11 @@ export default function App() {
     scrollToSection('reserve');
   };
 
+  const handleOrderSignatureDish = (dish: ProductItem) => {
+    handleAddToCart(dish);
+    setIsCartOpen(true);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 text-zinc-900">
       <Navbar cartCount={totalCartItems} onOpenCart={() => setIsCartOpen(true)} />
@@ -83,9 +90,15 @@ export default function App() {
           }}
         />
 
-        <ChefSection onBookChefTable={handleBookChefTable} />
+        <ChefSection
+          onBookChefTable={handleBookChefTable}
+          onOrderSignatureDish={handleOrderSignatureDish}
+        />
 
-        <ReservationSection preferredExperience={preferredExperience} />
+        <ReservationSection
+          preferredExperience={preferredExperience}
+          externalReservation={externalReservation}
+        />
 
         <HowItWorksAndTestimonials />
       </main>
@@ -102,6 +115,11 @@ export default function App() {
       />
 
       <LegalModal activeKey={activeLegalKey} onClose={() => setActiveLegalKey(null)} />
+
+      <SupportChatWidget
+        cartEntries={cartEntries}
+        onBookingConfirmed={(reservation) => setExternalReservation(reservation)}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Calendar, CheckCircle2, Clock, Users } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, MessageCircle, Users } from 'lucide-react';
+import { WHATSAPP_URL } from '../data/catalog';
 
 export interface ReservationData {
   id: string;
@@ -15,9 +16,13 @@ export interface ReservationData {
 
 interface ReservationSectionProps {
   preferredExperience: string;
+  externalReservation: ReservationData | null;
 }
 
-export function ReservationSection({ preferredExperience }: ReservationSectionProps) {
+export function ReservationSection({
+  preferredExperience,
+  externalReservation,
+}: ReservationSectionProps) {
   const today = new Date().toISOString().split('T')[0];
 
   const [experience, setExperience] = useState(preferredExperience || 'Main Dining Room');
@@ -37,6 +42,12 @@ export function ReservationSection({ preferredExperience }: ReservationSectionPr
       setConfirmed(null);
     }
   }, [preferredExperience]);
+
+  useEffect(() => {
+    if (externalReservation) {
+      setConfirmed(externalReservation);
+    }
+  }, [externalReservation]);
 
   const timeSlots = ['12:30 PM', '2:00 PM', '5:30 PM', '7:00 PM', '8:30 PM'];
   const experiences = ['Main Dining Room', "Chef's Tasting Counter", 'Private Family Table'];
@@ -86,7 +97,9 @@ export function ReservationSection({ preferredExperience }: ReservationSectionPr
                 Reserve Your Table in Seconds
               </h2>
               <p className="text-base text-stone-600 leading-relaxed">
-                Dine with us at our Akure flagship restaurant. Instant confirmation with zero booking fees — choose your seating area, time slot, and party size.
+                Dine with us at our Akure flagship restaurant. Instant confirmation with zero booking
+                fees — choose your seating area, time slot, and party size, or ask our AI assistant
+                to guide your booking.
               </p>
             </div>
 
@@ -103,7 +116,8 @@ export function ReservationSection({ preferredExperience }: ReservationSectionPr
                 <div>
                   <span className="font-semibold text-zinc-900 block">Location</span>
                   <span>
-                    Fonts Hall Complex, Opposite Agape Ministries, Akure-Ilesha Road, Akure, Ondo State
+                    Fonts Hall Complex, Opposite Agape Ministries, Akure-Ilesha Road, Akure, Ondo
+                    State
                   </span>
                 </div>
               </div>
@@ -111,7 +125,16 @@ export function ReservationSection({ preferredExperience }: ReservationSectionPr
                 <Calendar className="w-4 h-4 text-emerald-900 mt-0.5 shrink-0" />
                 <div>
                   <span className="font-semibold text-zinc-900 block">Direct Host Desk</span>
-                  <span className="tabular-nums">0906 701 9742 · htmlfoods@gmail.com</span>
+                  <span className="tabular-nums block">0906 701 9742 · htmlfoods@gmail.com</span>
+                  <a
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 hover:underline underline-offset-4 mt-1.5"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Message us on WhatsApp about meals &amp; tables</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -134,8 +157,12 @@ export function ReservationSection({ preferredExperience }: ReservationSectionPr
                 </div>
 
                 <p className="text-sm text-stone-600 mb-6">
-                  Thank you, <span className="font-semibold text-zinc-900">{confirmed.name}</span>. Your table is reserved and a confirmation summary has been prepared for{' '}
-                  <span className="font-medium text-zinc-900">{confirmed.email}</span>.
+                  Thank you, <span className="font-semibold text-zinc-900">{confirmed.name}</span>.
+                  Your table is reserved and a confirmation summary has been recorded for{' '}
+                  <span className="font-medium text-zinc-900">
+                    {confirmed.email || confirmed.phone}
+                  </span>
+                  .
                 </p>
 
                 <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-y border-stone-200 text-sm mb-6">
@@ -145,11 +172,15 @@ export function ReservationSection({ preferredExperience }: ReservationSectionPr
                   </div>
                   <div>
                     <dt className="text-xs text-stone-500">Date</dt>
-                    <dd className="font-medium text-zinc-900 tabular-nums mt-0.5">{confirmed.date}</dd>
+                    <dd className="font-medium text-zinc-900 tabular-nums mt-0.5">
+                      {confirmed.date}
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-xs text-stone-500">Time</dt>
-                    <dd className="font-medium text-zinc-900 tabular-nums mt-0.5">{confirmed.time}</dd>
+                    <dd className="font-medium text-zinc-900 tabular-nums mt-0.5">
+                      {confirmed.time}
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-xs text-stone-500">Party Size</dt>

@@ -2,35 +2,47 @@ import { useState } from 'react';
 import { HOW_IT_WORKS_STEPS, TESTIMONIALS } from '../data/catalog';
 
 const DELIVERY_ZONES: Record<string, string> = {
-  akure: 'Akure, Ondo State · Same-day restaurant delivery in 35–45 mins',
-  lagos: 'Lagos & Ibadan · Express courier delivery in 24 hours',
+  akure: 'Akure, Ondo State · Hot restaurant meals & foodstuffs delivered in 35–45 mins',
+  lagos: 'Lagos, Ibadan & Abuja · Express interstate courier delivery in 24 hours',
   uk: 'United Kingdom (London, Manchester, Birmingham) · Air freight in 4–5 business days',
   usa: 'United States (Houston, Atlanta, New York) · Tracked air export in 5–7 business days',
   canada: 'Canada (Toronto, Calgary, Ottawa) · Tracked air export in 5–7 business days',
 };
 
 export function HowItWorksAndTestimonials() {
-  const [locationInput, setLocationInput] = useState('London, UK');
-  const [checkedZone, setCheckedZone] = useState(
-    'United Kingdom (London, Manchester, Birmingham) · Air freight in 4–5 business days'
-  );
+  const [locationInput, setLocationInput] = useState('Akure, Ondo State');
+  const [checkedZone, setCheckedZone] = useState(DELIVERY_ZONES.akure);
 
   const handleCheckLocation = (val: string) => {
     setLocationInput(val);
     const normalized = val.toLowerCase();
     if (normalized.includes('akure') || normalized.includes('ondo')) {
       setCheckedZone(DELIVERY_ZONES.akure);
-    } else if (normalized.includes('lagos') || normalized.includes('ibadan') || normalized.includes('abuja')) {
+    } else if (
+      normalized.includes('lagos') ||
+      normalized.includes('ibadan') ||
+      normalized.includes('abuja') ||
+      normalized.includes('nigeria')
+    ) {
       setCheckedZone(DELIVERY_ZONES.lagos);
-    } else if (normalized.includes('uk') || normalized.includes('london') || normalized.includes('manchester')) {
+    } else if (
+      normalized.includes('uk') ||
+      normalized.includes('london') ||
+      normalized.includes('manchester')
+    ) {
       setCheckedZone(DELIVERY_ZONES.uk);
-    } else if (normalized.includes('us') || normalized.includes('houston') || normalized.includes('new york') || normalized.includes('atlanta')) {
+    } else if (
+      normalized.includes('us') ||
+      normalized.includes('houston') ||
+      normalized.includes('new york') ||
+      normalized.includes('atlanta')
+    ) {
       setCheckedZone(DELIVERY_ZONES.usa);
     } else if (normalized.includes('canada') || normalized.includes('toronto')) {
       setCheckedZone(DELIVERY_ZONES.canada);
     } else if (val.trim().length > 2) {
       setCheckedZone(
-        `${val.trim()} · Worldwide air export available (5–7 business days with vacuum-sealed packaging)`
+        `${val.trim()} · Nationwide & worldwide dispatch available with vacuum-sealed packaging`
       );
     }
   };
@@ -59,7 +71,7 @@ export function HowItWorksAndTestimonials() {
                 htmlFor="shipping-zone-input"
                 className="block text-xs font-semibold text-zinc-800 mb-1.5"
               >
-                Check Shipping or Local Delivery Availability
+                Check Delivery Availability in Your Area
               </label>
               <div className="flex gap-2">
                 <input
@@ -67,7 +79,7 @@ export function HowItWorksAndTestimonials() {
                   type="text"
                   value={locationInput}
                   onChange={(e) => handleCheckLocation(e.target.value)}
-                  placeholder="Enter city or country (e.g. London, Houston, Akure)"
+                  placeholder="Enter city or state (e.g. Akure, Lagos, Abuja, London)"
                   className="flex-1 h-11 px-3 rounded-lg border border-stone-300 bg-stone-50 text-sm text-zinc-900 focus:outline-2 focus:outline-emerald-900"
                 />
               </div>
@@ -86,7 +98,7 @@ export function HowItWorksAndTestimonials() {
                     {item.step}
                   </span>
                   <h3 className="font-display text-xl font-semibold text-zinc-900 mb-2">
-                    {item.step}. {item.title}
+                    {item.title}
                   </h3>
                   <p className="text-sm text-stone-600 leading-relaxed">{item.description}</p>
                 </div>
@@ -101,13 +113,13 @@ export function HowItWorksAndTestimonials() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-10">
             <p className="text-xs font-semibold tracking-wider uppercase text-emerald-900 mb-2">
-              Guest &amp; Diaspora Reviews
+              Guest &amp; Customer Reviews
             </p>
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 text-balance">
-              Trusted Across 30+ Countries &amp; Our Akure Dining Room
+              Trusted Across Nigeria &amp; Our Akure Dining Room
             </h2>
             <p className="text-base text-stone-600 mt-2">
-              Rated 4.9 out of 5 across 5,000+ worldwide export shipments and local dining tables.
+              Rated 4.9 out of 5 across 5,000+ foodstuff shipments and dining reservations.
             </p>
           </div>
 
