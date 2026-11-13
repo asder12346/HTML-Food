@@ -191,9 +191,28 @@ app.post('/api/chat', async (req, res) => {
     });
   } catch (err) {
     console.error('Chat API error:', err);
-    const message =
-      err instanceof Error ? err.message : 'Unable to process your request right now.';
-    res.status(500).json({ error: message });
+    let status = 500;
+    let message = 'Unable to process your request right now.';
+
+    if (err instanceof Error) {
+      message = err.message;
+      try {
+        const parsedErr = JSON.parse(err.message);
+        if (parsedErr?.error?.code) {
+          status = Number(parsedErr.error.code) || 500;
+        }
+        if (parsedErr?.error?.status === 'PERMISSION_DENIED' || status === 403) {
+          message =
+            'The configured GEMINI_API_KEY was rejected by Google AI. Please select or update your API key in the Settings > Secrets panel.';
+        } else if (parsedErr?.error?.message) {
+          message = parsedErr.error.message;
+        }
+      } catch {
+        // Keep raw err.message when not JSON
+      }
+    }
+
+    res.status(status).json({ error: message });
   }
 });
 
